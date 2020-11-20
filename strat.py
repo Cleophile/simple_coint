@@ -11,7 +11,7 @@ from statsmodels.tsa.stattools import coint
 from statsmodels.tsa.stattools import adfuller
 from sklearn.linear_model import LinearRegression
 
-first_data = pd.read_csv("./future_by_date/20190612.csv")
+first_data = pd.read_csv("../future_by_date/20190612.csv")
 instruments = list(set(first_data['windcode']))
 n_instr = len(instruments)
 
@@ -84,9 +84,9 @@ print("coef:", reg.coef_, "intercept:", reg.intercept_)
 
 residue = future1 - reg.predict(future0)
 
-print("------------------------ Residue ------------------------")
-print(residue)
-print("------------------------ Residue ------------------------")
+#  print("------------------------ Residue ------------------------")
+#  print(residue)
+#  print("------------------------ Residue ------------------------")
 
 _,adftest_result,*_ = adfuller(residue)
 print("p-value for ADF test:", adftest_result)
@@ -95,5 +95,9 @@ if adftest_result < 0.05:
     pass
 else:
     print("Non-stantionary cointegration detected!")
+
+#  test plot of residue
+#  plt.plot(residue)
+#  plt.show()
 
 # 收益补充
