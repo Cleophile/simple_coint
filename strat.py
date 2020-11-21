@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import coint
 from statsmodels.tsa.stattools import adfuller
 from sklearn.linear_model import LinearRegression
+from scipy.stats import shapiro
 
 first_data = pd.read_csv("../future_by_date/20190612.csv")
 instruments = list(set(first_data['windcode']))
@@ -92,12 +93,18 @@ _,adftest_result,*_ = adfuller(residue)
 print("p-value for ADF test:", adftest_result)
 
 if adftest_result < 0.05:
-    pass
+    _,sharpiro_result,*_ = shapiro(residue)
+    if sharpiro_result >= 0.05:
+        print("Non normal residue found")
+    else:
+        # generate signal
 else:
     print("Non-stantionary cointegration detected!")
 
 #  test plot of residue
 #  plt.plot(residue)
 #  plt.show()
+
+# Test for normality for the residue
 
 # 收益补充
