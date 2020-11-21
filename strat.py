@@ -16,13 +16,13 @@ first_data = pd.read_csv("../future_by_date/20190612.csv")
 instruments = list(set(first_data['windcode']))
 n_instr = len(instruments)
 
-def extract_date(s):
-    t = s['Unnamed: 0']
-    return t.year*10000 + t.month*100 + t.day
+#  def extract_date(s):
+    #  t = s['Unnamed: 0']
+    #  return t.year*10000 + t.month*100 + t.day
 
-def extract_time(s):
-    t = s['Unnamed: 0']
-    return t.hour*100 + t.minute
+#  def extract_time(s):
+    #  t = s['Unnamed: 0']
+    #  return t.hour*100 + t.minute
 
 # check for conintegration pairs
 clist = []
@@ -71,8 +71,8 @@ for i in clist:
 
 #  i, j = 'AL1908.SHF', 'P1909.DCE'
 
-for i,j,k in clist:
-    if k >= 0.05:
+for i,j,coint_p in clist:
+    if coint_p >= 0.05:
         continue
     print("Pair Anlysis:",i,j)
     future0 = first_data[first_data['windcode']==i]['close'].copy()
@@ -93,11 +93,10 @@ for i,j,k in clist:
     #  print(residue)
     #  print("------------------------ Residue ------------------------")
 
-    _,adftest_result,*_ = adfuller(residue)
-    print("p-value for ADF test:", adftest_result)
+    _, adftest_result, *_ = adfuller(residue)
 
     if adftest_result < 0.05:
-        _,shapiro_result,*_ = shapiro(residue)
+        _, shapiro_result, *_ = shapiro(residue)
         print("p-value for normality test:", shapiro_result)
         if shapiro_result >= 0.05:
             print("Non normal residue found")
@@ -107,6 +106,7 @@ for i,j,k in clist:
             print(z_residue)
     else:
         print("Non-stantionary cointegration detected!")
+        print("p-value for ADF test:", adftest_result)
     break
 
 #  test plot of residue
