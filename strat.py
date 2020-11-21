@@ -69,42 +69,47 @@ for i in clist:
 
 # add one section selecting pairs
 
-i, j = 'AL1908.SHF', 'P1909.DCE'
+#  i, j = 'AL1908.SHF', 'P1909.DCE'
 
-future0 = first_data[first_data['windcode']==i]['close'].copy()
-future1 = first_data[first_data['windcode']==j]['close'].copy()
-future0.fillna(method='ffill',inplace=True)
-future1.fillna(method='ffill',inplace=True)
+for i,j,k in clist:
+    if k >= 0.05:
+        continue
+    print("Pair Anlysis:",i,j)
+    future0 = first_data[first_data['windcode']==i]['close'].copy()
+    future1 = first_data[first_data['windcode']==j]['close'].copy()
+    future0.fillna(method='ffill',inplace=True)
+    future1.fillna(method='ffill',inplace=True)
 
-future0 = future0.to_numpy().reshape(-1,1)
-future1 = future1.to_numpy()
+    future0 = future0.to_numpy().reshape(-1,1)
+    future1 = future1.to_numpy()
 
-reg = LinearRegression().fit(future0,future1)
-print("R^2:", reg.score(future0,future1))
-print("coef:", reg.coef_, "intercept:", reg.intercept_)
+    reg = LinearRegression().fit(future0,future1)
+    print("R^2:", reg.score(future0,future1))
+    print("coef:", reg.coef_, "intercept:", reg.intercept_)
 
-residue = future1 - reg.predict(future0)
+    residue = future1 - reg.predict(future0)
 
-#  print("------------------------ Residue ------------------------")
-#  print(residue)
-#  print("------------------------ Residue ------------------------")
+    #  print("------------------------ Residue ------------------------")
+    #  print(residue)
+    #  print("------------------------ Residue ------------------------")
 
-_,adftest_result,*_ = adfuller(residue)
-print("p-value for ADF test:", adftest_result)
+    _,adftest_result,*_ = adfuller(residue)
+    print("p-value for ADF test:", adftest_result)
 
-if adftest_result < 0.05:
-    _,sharpiro_result,*_ = shapiro(residue)
-    if sharpiro_result >= 0.05:
-        print("Non normal residue found")
+    if adftest_result < 0.05:
+        _,shapiro_result,*_ = shapiro(residue)
+        print("p-value for normality test:", shapiro_result)
+        if shapiro_result >= 0.05:
+            print("Non normal residue found")
+        else:
+            # generate signal
+            pass
     else:
-        # generate signal
-else:
-    print("Non-stantionary cointegration detected!")
+        print("Non-stantionary cointegration detected!")
+    break
 
 #  test plot of residue
 #  plt.plot(residue)
 #  plt.show()
-
-# Test for normality for the residue
 
 # 收益补充
