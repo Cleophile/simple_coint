@@ -27,6 +27,8 @@ def regress_by_date(last_date):
 
     #  check for conintegration pairs
     clist = []
+    final_list = []
+
     for x in range(n_instr):
         for y in range(x+1,n_instr):
             i = instruments[x]
@@ -43,7 +45,7 @@ def regress_by_date(last_date):
             # if set to 1 or larger, more of them can pass the test
             result = coint(future0['close'],future1['close'])
             clist.append((i,j,result[1]))
-
+    #  print(future0['time'])
     #  clist = sorted(clist,key=lambda x:x[2])
 
     #  for i in clist:
@@ -77,7 +79,7 @@ def regress_by_date(last_date):
     for i,j,coint_p in clist:
         if coint_p >= 0.05:
             continue
-        print("Pair Anlysis:",i,j)
+        #  print("Pair Anlysis:",i,j)
         future0 = first_data[first_data['windcode']==i]['close'].copy()
         future1 = first_data[first_data['windcode']==j]['close'].copy()
         future0.fillna(method='ffill',inplace=True)
@@ -87,8 +89,8 @@ def regress_by_date(last_date):
         future1 = future1.to_numpy()
 
         reg = LinearRegression().fit(future0,future1)
-        print("R^2:", reg.score(future0,future1))
-        print("coef:", reg.coef_, "intercept:", reg.intercept_)
+        #  print("R^2:", reg.score(future0,future1))
+        #  print("coef:", reg.coef_, "intercept:", reg.intercept_)
 
         residue = future1 - reg.predict(future0)
 
@@ -106,12 +108,13 @@ def regress_by_date(last_date):
             else:
                 # generate signal
                 # TODO Add moving average?
-                z_residue = (residue - np.mean(residue)) / np.std(residue)
-                print(z_residue)
+                #  z_residue = (residue - np.mean(residue)) / np.std(residue)
+                #  print(z_residue)
+                final_list.append([i,j,reg,np.std(residue)])
         else:
             print("Non-stantionary cointegration detected!")
             print("p-value for ADF test:", adftest_result)
-        break
+    return final_list
 
 #  test plot of residue
 #  plt.plot(residue)
@@ -120,4 +123,5 @@ def regress_by_date(last_date):
 # 收益补充
 if __name__ == "__main__":
     f = 20190612
-    regress_by_date(f)
+    final_list = regress_by_date(f)
+    print(final_list)
