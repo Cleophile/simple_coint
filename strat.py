@@ -43,9 +43,11 @@ for x in range(n_instr):
         result = coint(future0['close'],future1['close'])
         clist.append((i,j,result[1]))
 
-for i in clist:
-    if i[2] < 0.05:
-        print(i)
+#  clist = sorted(clist,key=lambda x:x[2])
+
+#  for i in clist:
+    #  if i[2] < 0.05:
+        #  print(i)
 
 #  test and plot area
 #  i,j = 'SR909.CZC', 'AL1905.SHF'
@@ -102,6 +104,7 @@ for i,j,coint_p in clist:
             print("Non normal residue found")
         else:
             # generate signal
+            # TODO Add moving average?
             z_residue = (residue - np.mean(residue)) / np.std(residue)
             print(z_residue)
     else:
