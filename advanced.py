@@ -17,7 +17,8 @@ future = first_data[first_data['windcode']==instruments[0]][['time','close']]
 future.fillna(method='ffill',inplace=True)
 future.rename(columns={'close':instruments[0]},inplace=True)
 
-for i in instruments[1:]:
+# TODO pre-analysis for the 12 threshold
+for i in instruments[1:10]:
     data = first_data[first_data['windcode']==i][['time','close']]
     future = pd.merge(future,data,on='time')
     future.fillna(method='ffill',inplace=True)
@@ -29,4 +30,11 @@ print(future)
 intruments = future.columns
 print(instruments)
 
-#  jres = coint_johansen(future, det_order=0, k_ar_diff=1)
+jres = coint_johansen(future, det_order=0, k_ar_diff=1)
+
+#  ordered eigenvalue
+#  print(jres.eig)
+#  print(jres.evec)
+
+print(jres.cvm)
+print(jres.cvt)
