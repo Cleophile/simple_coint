@@ -103,7 +103,8 @@ for i,j,k in clist:
             print("Non normal residue found")
         else:
             # generate signal
-            pass
+            z_residue = (residue - np.mean(residue)) / np.std(residue)
+            print(z_residue)
     else:
         print("Non-stantionary cointegration detected!")
     break
