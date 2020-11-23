@@ -82,6 +82,7 @@ for date_index in range(1,len(date_list)):
             pass
 
     trade_data = second_raw_data[second_raw_data['time']>=1341]
+    #  print(trade_data)
     #  print(final_list)
 
     for i,j,reg,std in final_list[:1]:
@@ -100,10 +101,11 @@ for date_index in range(1,len(date_list)):
         direction = 0
         portfolio = []
 
-        while(p < n - 30):
+        #  print(n)
+        while(p < n - 40):
             price0 = future0[p]
             price1 = future1[p]
-            if potential_signal[p] > 2.5:
+            if potential_signal[p] > 2.0:
                 direction = 1
                 if coef > 0:
                     combo = money / (price1 + coef*price0)
@@ -115,7 +117,7 @@ for date_index in range(1,len(date_list)):
                     portfolio.append([price1,combo,-1])
                 break
 
-            if potential_signal[p] < -2.5:
+            if potential_signal[p] < -2.0:
                 direction = -1
                 if coef > 0:
                     combo = money / (price1 + coef*price0)
